@@ -12,7 +12,7 @@ const initialState = {
 };
 
 const assignmentsSlice = createSlice({
-  name: "assignments",
+  name: "quizzes",
   initialState,
   reducers: {
     setAssignments: (state, action) => {
