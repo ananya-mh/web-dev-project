@@ -10,6 +10,7 @@ import PeopleTable from "./People/Table";
 import { useParams } from "react-router";
 import CoursePeople from "./People/CoursePeople";
 import Quizzes from "./Quizzes";
+import QuizDetails from "./Quizzes/QuizDetails";
 
 export default function Courses({ courses }) {
   const { pathname } = useLocation();
@@ -19,7 +20,6 @@ export default function Courses({ courses }) {
   return (
     <div id="wd-courses">
       <h2 className="text-danger"> {course && course.name} &gt; {pathname.split("/")[4]}
-      <></>{pathname.split("/")[5] && <>&gt; {pathname.split("/")[5]}</>}
       </h2>
       <FaAlignJustify className="me-4 fs-4 mb-1" />
       <hr />
@@ -37,6 +37,7 @@ export default function Courses({ courses }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
+            <Route path="Quizzes/:qid" element={<QuizDetails />} />
             <Route path="Grades" element={<h2>Grades</h2>} />
             <Route path="People" element={<CoursePeople/>}/>
           </Routes>
