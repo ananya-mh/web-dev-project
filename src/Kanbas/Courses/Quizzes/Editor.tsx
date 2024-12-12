@@ -7,7 +7,7 @@ import { useState } from "react";
 import * as quizClient from "./client";
 
 export default function QuizEditor() {
-  const { aid } = useParams();
+  const { qid } = useParams();
   const { cid } = useParams();
   //const assignment = db.assignments;
   const { quiz } = useSelector((state: any) => state.assignmentReducer);
@@ -16,8 +16,8 @@ export default function QuizEditor() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const disabled = currentUser.role !== "FACULTY";
   const handleSave = async () => {
-    if (aid === "new") {
-      await quizClient.createNewQuiz(quiz);
+    if (qid === "new") {
+      await quizClient.createQuiz(cid,quiz);
       dispatch(
         addQuiz({
           ...quiz,

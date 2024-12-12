@@ -1,55 +1,81 @@
 import { createSlice } from "@reduxjs/toolkit";
-const initialState = {
-  quizzes: [],
-  quiz: {
-    name: "",
-    course: "",
-    description: "",
-    availableFrom: "",
-    availableUntil: "",
-    points: 0,
-  },
-};
 
-const quizzesSlice = createSlice({
-  name: "quizzes",
-  initialState,
-  reducers: {
-    setQuizzes: (state, action) => {
-      state.quizzes = action.payload;
-    },
-    addQuiz: (state, action) => {
-      const newQuiz: any = [
-        ...state.quizzes,
-        {
-          ...action.payload,
-          _id: new Date().getTime().toString(),
-        },
-      ];
-      state.quizzes = newQuiz;
-      state.quiz = {
+
+const initialState = {
+    quizzes: [] as any[],
+    quiz: {
+        _id: "",
         name: "",
-        course: "",
         description: "",
+        published: false,
+        course: "",
+        type: "GRADED_QUIZ",
+        points: 0,
+        assignmentGroup: "QUIZZES",
+        shuffleAnswers: true,
+        timeLimit: 20,
+        multipleAttempts: false,
+        attemptChange: 1,
+        showCorrectAnswers: false,
+        accessCode: "",
+        oneQuestionAtATime: true,
+        webcamRequired: false,
+        lockQuestionsAfterAnswering: false,
+        dueDate: "",
         availableFrom: "",
         availableUntil: "",
+        isTemporary: true,
+        isTimeLimit: true,
+        questions: []
+    },
+    question: {
+        title: "",
+        questionText: "Multiple",
+        questionType: "MULTIPLE_CHOICE",
         points: 0,
-      };
-    },
-    deleteQuiz: (state, action) => {
-      state.quizzes = state.quizzes.filter((a: any) => a._id !== action.payload);
-    },
-    updateQuiz: (state, { payload: quiz }) => {
-      state.quizzes = state.quizzes.map((a: any) =>
-        a._id === quiz._id ? quiz : a
-      ) as any;
-    },
-    setQuiz: (state, action) => {
-      state.quiz = action.payload;
-    },
-  },
+        multipleChoiceQuestionAnswers: [],
+        trueFalseAnswer: false,
+        fillInBlankAnswers: []
+    }
+};
+
+const quizzesReducer = createSlice({
+    name: "quizzes",
+    initialState,
+    reducers: {
+        addQuiz: (state, action) => {
+            state.quizzes = [action.payload, ...state.quizzes];
+        },
+        deleteQuiz: (state, action) => {
+            state.quizzes = state.quizzes.filter(
+                (quiz) => quiz._id !== action.payload
+            );
+        },
+        updateQuiz: (state, action) => {
+            state.quizzes = state.quizzes.map(
+                (quiz) => {
+                    return quiz._id === action.payload._id ? action.payload : quiz;
+                }
+            );
+        },
+        setQuizzes: (state, action) => {
+            state.quizzes = action.payload;
+        },
+
+        setQuiz: (state, action) => {
+            state.quiz = action.payload;
+        },
+        setQuestion: (state, action) => {
+            state.question = action.payload;
+        }
+    }
 });
 
-export const {addQuiz, deleteQuiz, setQuiz, setQuizzes, updateQuiz } =
-  quizzesSlice.actions;
-export default quizzesSlice.reducer;
+export const {
+    addQuiz,
+    deleteQuiz,
+    updateQuiz,
+    setQuizzes,
+    setQuiz, setQuestion } =
+    quizzesReducer.actions;
+export default quizzesReducer.reducer;

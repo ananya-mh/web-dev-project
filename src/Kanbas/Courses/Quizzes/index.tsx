@@ -12,6 +12,7 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuiz, deleteQuiz, setQuizzes } from "./reducer";
 import * as quizClient from "./client";
+import * as coursesClient from "../client";
 import GreenCheckmark from "./GreenCheckmark";
 export default function Quizzes() {
   const { cid } = useParams();
@@ -19,18 +20,32 @@ export default function Quizzes() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const disabled = currentUser.role !== "FACULTY";
   const intialQuiz = {
-    name: "New Assignment Title",
-    course: cid,
-    description: "New Description",
+    name: "Quiz 1",
+    description: "",
+    published: "false",
+    course: 932490543,
+    type: "Graded",
     points: "100",
-    availableUntil: "2023-09-18T23:59",
-    availableFrom: "2023-09-11T00:00",
+    assignmentGroup:"QUIZZES" ,
+    shuffleAnswers: false,
+    timeLimit: 20 ,
+    multipleAttempts: false ,
+    attemptChance: 1 ,
+    showCorrectAnswers:false ,
+    accessCode:  "" ,
+    oneQuestionAtATime:  true ,
+    webcamRequired: false,
+    lockQuestionsAfterAnswering: false,
+    dueDate: "date",
+    availableFrom: "date",
+    availableUntil:"date",
+    isTemporary: true ,
+    questions: []
   };
-  const { quizzes } = useSelector((state: any) => state.quizReducer);
-  //const { assignment } = useSelector((state: any) => state.assignmentReducer);
+  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const dispatch = useDispatch();
   const fetchAllQuizzes = async () => {
-    const modules = await quizClient.fetchQuizzesForCourse(cid as string);
+    const modules = await coursesClient.fetchQuizzesForCourse(cid as string);
     dispatch(setQuizzes(modules));
   };
   useEffect(() => {
