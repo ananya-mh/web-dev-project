@@ -50,8 +50,6 @@ export default function Kanbas() {
       const enrolledCourses = await userClient.findCoursesForUser(
         currentUser._id
       );
-console.log("Enrolled courses", enrolledCourses)
-console.log("ALL courses", allCourses)
 
       const courses = allCourses.map((course) => {
         if (enrolledCourses.find((c) =>   c && course && c._id === course._id)) {
