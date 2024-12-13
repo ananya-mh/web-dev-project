@@ -8,13 +8,13 @@ interface Question {
   _id: string;
   text: string;
   points: number;
-  type: 'multiple-choice' | 'fill-in-the-blanks' | 'true-false';
+  questionType: 'MULTIPLE_CHOICE' | 'FILL_IN' | 'TRUE_FALSE';
   options?: string[];
   answers: string[];
 }
 
 interface Answers {
-  [key: number]: string;
+  [key: number]: string | string[];
 }
 
 interface Quiz {
@@ -46,6 +46,18 @@ export default function QuizPreview() {
     }));
   };
 
+  const handleArrayAnswerUpdate = (questionId: number, answer: string) => {
+    setAnswers((prevAnswers) => {
+      const updatedAnswers = { ...prevAnswers };
+      if (Array.isArray(updatedAnswers[questionId])) {
+        updatedAnswers[questionId].push(answer);
+      } else {
+        updatedAnswers[questionId] = [answer];
+      }
+      return updatedAnswers;
+    });
+  };
+
   return (
     <div className='container mt-5'>
       <h3>{currentQuiz?.name}</h3>
@@ -68,7 +80,7 @@ export default function QuizPreview() {
                 </div>
                 <div className='card-body'>
                   <p>{questions[questionIndex].questionText}</p>
-                  {questions[questionIndex].type === 'multiple-choice' && (
+                  {questions[questionIndex].questionType === 'MULTIPLE_CHOICE' && (
                     <div className='list-group'>
                       {questions[questionIndex].options?.map((option) => (
                         <>
@@ -83,7 +95,7 @@ export default function QuizPreview() {
                             name={`question-${questionIndex}`}
                             value={option}
                             checked={answers[questionIndex] === option}
-                            onChange={() => handleAnswerUpdate(questionIndex, option)}
+                            onChange={() => handleArrayAnswerUpdate(questionIndex, option)}
                             className='me-2'
                           />
                           {option}
@@ -92,7 +104,7 @@ export default function QuizPreview() {
                       ))}
                     </div>
                   )}
-                  {questions[questionIndex].type === 'true-false' && (
+                  {questions[questionIndex].questionType === 'TRUE_FALSE' && (
                     <div className='list-group'>
                     <hr />
                       <label className='list-group-item d-flex align-items-center'
@@ -123,7 +135,7 @@ export default function QuizPreview() {
                       </label>
                     </div>
                   )}
-                  {questions[questionIndex].type === 'fill-in-the-blanks' && (
+                  {questions[questionIndex].questionType === 'FILL_IN' && (
                     <div className='mb-3'>
                         <input
                           key={questionIndex}
@@ -131,7 +143,7 @@ export default function QuizPreview() {
                           className='form-control my-2'
                           value={answers[questionIndex]}
                           onChange={(e) =>
-                            handleAnswerUpdate(questionIndex, e.target.value)
+                            handleArrayAnswerUpdate(questionIndex, e.target.value)
                           }
                         />
                     </div>
