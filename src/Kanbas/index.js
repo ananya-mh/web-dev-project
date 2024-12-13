@@ -11,6 +11,7 @@ import ProtectedRoute from "./Account/ProtectedRoute";
 import * as userClient from "./Account/client";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import QuizDetailScreen from "./Courses/Quizzes/QuizDetailScreen";
 
 export default function Kanbas() {
   const initialCourseState = {
@@ -157,6 +158,7 @@ export default function Kanbas() {
             />
             <Route path="/Calendar" element={<h1>Calendar</h1>} />
             <Route path="/Inbox" element={<h1>Inbox</h1>} />
+            
           </Routes>
         </div>
       </div>
