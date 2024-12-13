@@ -12,8 +12,8 @@ export default function QuestionsEditor() {
     const { cid, qid } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const question = useSelector((state) => state.quizzesReducer.question);
-    const quiz = useSelector((state) => state.quizzesReducer.quiz);
+    const question = useSelector((state: any) => state.quizzesReducer.question);
+    const quiz = useSelector((state: any) => state.quizzesReducer.quiz);
     const [questionNumber, setQuestionNumber] = useState(-1);
     const [showQuestionModal, setShowQuestionModal] = useState(false);
 
@@ -50,7 +50,7 @@ export default function QuestionsEditor() {
                 if (!question.multipleChoiceQuestionAnswers || question.multipleChoiceQuestionAnswers.length === 0) {
                     return "Please provide at least one answer for the multiple-choice question.";
                 }
-                const hasCorrectAnswer = question.multipleChoiceQuestionAnswers.some(answer => answer.correct);
+                const hasCorrectAnswer = question.multipleChoiceQuestionAnswers.some((answer: { correct: any }) => answer.correct);
                 if (!hasCorrectAnswer) {
                     return "Please select the correct answer for the multiple-choice question.";
                 }
@@ -93,7 +93,7 @@ export default function QuestionsEditor() {
 
 
 
-    const handleEditQuestion = (index) => {
+    const handleEditQuestion = (index: any) => {
         dispatch(setQuestion(quiz.questions[index]));
         setQuestionNumber(index);
         setShowQuestionModal(true);
@@ -150,7 +150,7 @@ export default function QuestionsEditor() {
             ))} */}
 
             {quiz.questions && quiz.questions.length > 0 && (
-                quiz.questions.map((q, i) => (
+                quiz.questions.map((q: any, i: any) => (
                     <div key={i} className="row align-items-center mb-2">
                         <div className="col-md-8">
                             <strong>{q.title}</strong> - <span dangerouslySetInnerHTML={{ __html: q.questionText }} />

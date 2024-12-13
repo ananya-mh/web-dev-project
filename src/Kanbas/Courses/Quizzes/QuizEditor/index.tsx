@@ -8,12 +8,20 @@ import { setQuiz } from "../reducer";
 import DetailsEditor from "./DetailsEditor";
 import QuestionsEditor from "./QuestionsEditor";
 
-
 export default function QuizEditor() {
     const { qid } = useParams();
     const dispatch = useDispatch();
     const [currentTab, setCurrentTab] = useState("Details");
     const quiz = useSelector((state: any) => state.quizzesReducer.quiz);
+    type Question = {
+        title: string;
+        questionText: string;
+        questionType: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_IN';
+        points: number;
+        multipleChoiceQuestionAnswers: string[];
+        trueFalseAnswer: boolean;
+        fillInBlankAnswers: { text: string }[];
+    };
 
     useEffect(() => {
         if (qid) {
@@ -28,7 +36,7 @@ export default function QuizEditor() {
             <div className="text-end col style={{ fontSize: '1.2em' }}">
                 {currentTab === "Details" ? (
                     <>
-                        Points {quiz.questions.length > 0 ? `${quiz.questions.reduce((addedPoints, { points }) => addedPoints + points, 0)}` : '0'}
+                        Points {quiz.questions.length > 0 ? `${quiz.questions.reduce((addedPoints: number, question: Question) => addedPoints + question.points, 0)}` : '0'}
                         {quiz.published ?
                             <div className="text-success"><FaCheckCircle /> Published</div>
                             : <div className="text-danger"><FaBan /> Unpublished </div>
@@ -36,7 +44,7 @@ export default function QuizEditor() {
                     </>
                 ) : (
                     <>
-                        Points {quiz.questions.length > 0 ? `${quiz.questions.reduce((addedPoints, { points }) => addedPoints + points, 0)}` : '0'}
+                        Points {quiz.questions.length > 0 ? `${quiz.questions.reduce((addedPoints: number, question: Question) => addedPoints + question.points, 0)}` : '0'}
                     </>
                 )}
             </div>

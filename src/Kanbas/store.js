@@ -8,7 +8,7 @@ const store = configureStore({
     modulesReducer,
     accountReducer,
     assignmentReducer,
-    quizzesReducer 
+    quizzesReducer,
   },
 });
 export default store;

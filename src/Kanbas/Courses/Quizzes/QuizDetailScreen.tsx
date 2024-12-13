@@ -17,14 +17,14 @@ export default function QuizDetailScreen() {
     console.log(user.role)
     const [history, setHistory] = useState([] as any[]);
     type Question = {
-    title: string;
-    questionText: string;
-    questionType: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_IN';
-    points: number;
-    multipleChoiceQuestionAnswers: string[];
-    trueFalseAnswer: boolean;
-    fillInBlankAnswers: { text: string }[];
-};
+        title: string;
+        questionText: string;
+        questionType: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'FILL_IN';
+        points: number;
+        multipleChoiceQuestionAnswers: string[];
+        trueFalseAnswer: boolean;
+        fillInBlankAnswers: { text: string }[];
+    };
 
 
     useEffect(() => {

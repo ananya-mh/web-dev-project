@@ -11,6 +11,7 @@ import { useParams } from "react-router";
 import CoursePeople from "./People/CoursePeople";
 import Quizzes from "./Quizzes";
 import QuizDetails from "./Quizzes/QuizDetails";
+import QuizEditor from "./Quizzes/QuizEditor";
 import QuizDetailScreen from "./Quizzes/QuizDetailScreen";
 
 export default function Courses({ courses }) {
@@ -39,6 +40,7 @@ export default function Courses({ courses }) {
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
             <Route path="Quizzes/:qid" element={<QuizDetailScreen />} />
+            <Route path="Quizzes/:qid/edit" element={<QuizEditor />} />
             <Route path="Grades" element={<h2>Grades</h2>} />
             <Route path="People" element={<CoursePeople/>}/>
           </Routes>

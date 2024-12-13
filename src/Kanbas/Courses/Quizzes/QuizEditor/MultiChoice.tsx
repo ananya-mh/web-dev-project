@@ -3,10 +3,28 @@ import { setQuestion } from "../reducer";
 import { FaPlus } from "react-icons/fa";
 //import { Editor } from "@tinymce/tinymce-react";
 
+type MultipleChoiceAnswer = {
+    answer: string;
+    correct: boolean;
+};
+
+// Define the type for the question object
+type Question = {
+    title: string;
+    questionText: string;
+    questionType: string;
+    points: number;
+    multipleChoiceQuestionAnswers: MultipleChoiceAnswer[];
+    trueFalseAnswer: boolean;
+    fillInBlankAnswers: string[];
+};
+
 export default function MultipleChoice() {
     const WYSIWYG_API = process.env.REACT_APP_WYSIWYG_API;
     const dispatch = useDispatch();
-    const question = useSelector((state: any) => state.quizzesReducer.question);
+    // const question = useSelector((state: any) => state.quizzesReducer.question);
+    const question: Question = useSelector((state: any) => state.quizzesReducer.question);
+   
 
     const handleAnswerChange = (index: number, value: string) => {
         const updatedAnswers = question.multipleChoiceQuestionAnswers.map((answer, i) =>
