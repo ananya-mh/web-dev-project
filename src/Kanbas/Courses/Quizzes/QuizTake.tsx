@@ -14,7 +14,7 @@ export default function QuizTake() {
     const [history, setHistory] = useState([] as any[]);
     const submit = async () => {
         try {
-            await client.updateHistory(qid!, {questions: questionList});
+            await client.updateAttemps(qid!, {questions: questionList});
             navigate("..", {relative: "path"})
         } catch (error) {
             console.error("Error fetching quizzes:", error);

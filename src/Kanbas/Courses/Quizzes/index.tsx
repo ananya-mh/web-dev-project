@@ -1,125 +1,194 @@
-import React, { useState, useEffect } from "react";
-import "./index.css";
-import { BsGripVertical } from "react-icons/bs";
-import { MdOutlineAssignment } from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
-import QuizControlButtons from "./LessonControlButtons";
-import { HiOutlinePencilAlt } from "react-icons/hi";
-import { RxRocket } from "react-icons/rx";
-import DescControlButtons from "./LessonControlButtons";
-import QuizControls from "./QuizControls";
-import { Link, useParams } from "react-router-dom";
+import { FaEllipsisVertical } from "react-icons/fa6";
+import { FaBan, FaCheckCircle, FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setQuiz, deleteQuiz, setQuizzes } from "./reducer";
-import * as quizClient from "./client";
-import * as coursesClient from "../client";
-import GreenCheckmark from "./GreenCheckmark";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { findQuizzesForCourse } from "./client";
+import { setQuizzes, deleteQuiz, updateQuiz } from "./reducer";
+import { formatDate } from "./DateFormat";
+import * as client from "./client";
+import { SiStarship } from 'react-icons/si';
+import { MdDoNotDisturb } from "react-icons/md";
+
+function QuizAvailable(props: any) {
+    const currentDate = new Date();
+    const { quiz } = props;
+
+    if (currentDate > new Date(quiz.availableUntil)) {
+        return <strong>Closed</strong>;
+    }
+    if (currentDate > new Date(quiz.availableFrom)) {
+        return <strong>Available</strong>;
+    }
+    const availableDateString = formatDate(quiz.availableFrom);
+
+    return (
+        <span>
+            <strong>Not Available Until</strong> {availableDateString}
+        </span>
+    );
+}
+
 export default function Quizzes() {
-  const { cid } = useParams();
+    const { cid } = useParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const user = useSelector((state: any) => state.accountReducer.currentUser);
+    // console.log("haha")
+    // console.log(user)
+    const quizzes = useSelector((state: any) => state.quizzesReducer.quizzes);
+    const [activeQuizId, setActiveQuizId] = useState<string | null>(null);
 
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  console.log(currentUser.role);
-  const disabled = currentUser.role !== "FACULTY";
-  const intialQuiz = {
-    name: "Quiz 1",
-    description: "",
-    published: "false",
-    course: 932490543,
-    type: "Graded",
-    points: "100",
-    assignmentGroup: "QUIZZES",
-    shuffleAnswers: false,
-    timeLimit: 20,
-    multipleAttempts: false,
-    attemptChance: 1,
-    showCorrectAnswers: false,
-    accessCode: "",
-    oneQuestionAtATime: true,
-    webcamRequired: false,
-    lockQuestionsAfterAnswering: false,
-    dueDate: "date",
-    availableFrom: "date",
-    availableUntil: "date",
-    isTemporary: true,
-    questions: []
-  };
-  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
-  const dispatch = useDispatch();
-  const fetchAllQuizzes = async () => {
-    const modules = await coursesClient.fetchQuizzesForCourse(cid as string);
-    dispatch(setQuizzes(modules));
-  };
-  useEffect(() => {
-    fetchAllQuizzes();
-  }, []);
+    const fetchQuizzes = async () => {
+        if (cid) {
+            try {
+                let fetchedQuizzes = await findQuizzesForCourse(cid);
+                console.log("FQ!")
+                console.log(fetchedQuizzes)
+                dispatch(setQuizzes(fetchedQuizzes));
+                fetchedQuizzes.map(async (q: any, i: number) => {
+                    let history = await client.findHistoriesByQuizId(q._id)
+                    let newFetchedQuizzes = [...fetchedQuizzes]
+                    if (history.length > 0) {
+                        newFetchedQuizzes[i] = { ...newFetchedQuizzes[i], score: history[0].points }
+                        dispatch(setQuizzes(newFetchedQuizzes));
+                    }
+                })
+            } catch (error) {
+                console.error("Error fetching quizzes:", error);
+            }
+        }
+    };
 
-  const removeQuiz = async (quizId: string) => {
-    await quizClient.deleteQuiz(quizId);
-    dispatch(deleteQuiz(quizId));
-  };
+    useEffect(() => { fetchQuizzes(); }, [cid]);
+    const filteredQuizzes = user && user.role === "STUDENT" ? quizzes.filter((quiz: any) => quiz.published) : quizzes;
+    const handleMenu = (quizId: string) => {
+        setActiveQuizId(activeQuizId === quizId ? null : quizId);
+    };
+    const handleAddNewQuiz = async () => {
+        if (cid) {
+            const newQuiz = await client.createQuiz(cid, { name: `New Quiz` });
+            navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuiz._id}/edit`);
+        }
+    };
 
-  return (
-    <div className="me-4">
-      <QuizControls setQuiz={() => dispatch(setQuiz(intialQuiz))} />
-      <br />
-      <br />
-      <br />
-      <br />
-      <ul id="wd-modules" className="list-group rounded-0">
-        <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title p-3 ps-2 bg-secondary">
-            <BsGripVertical className="me-2 fs-3" />
-            Assignment Quizzes
-            <QuizControlButtons />
-            {/* <span className="float-end border boder-dark rounded p-1">40% of Total</span> */}
-          </div>
-          <ul className="wd-lessons list-group rounded-0">
-            {quizzes.map((quiz: any) => (
-              <li className="wd-lesson list-group-item p-3 ps-1">
-                <div className="position-absolute top-50 start-0 translate-middle-y">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <RxRocket className="me-2 fs-3" color="green" />
+    const handleDelete = async (quizId: string) => {
+        await client.deleteQuiz(quizId);
+        dispatch(deleteQuiz(quizId));
+        setActiveQuizId(null);
+    };
+
+    const handleChangePublishValue = async (quiz: any, newPublishStatus: any) => {
+        const newQuiz = { ...quiz, published: newPublishStatus };
+        await client.updateQuiz(newQuiz);
+        dispatch(updateQuiz(newQuiz));
+        setActiveQuizId(null);
+    };
+
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="col-6">
+                    <input id="quiz-search" className="form-control" placeholder="Search for Quiz" />
                 </div>
-                <div className="position-absolute top-50 start-50 translate-middle w-75">
-                  <Link
-                    className="wd-assignment-link text-black link-underline link-underline-opacity-0"
-                    to={`./${quiz._id}`}
-                    onClick={() => dispatch(setQuiz(quiz))}
-                  >
-                    {quiz.name}
-                  </Link>
-                  <p>
-                    <text className="text-danger">Multiple Modules</text> |{" "}
-                    <b>Not Available until</b> {quiz.availableFrom.split("T")[0]} at{" "}
-                    {quiz.availableFrom.split("T")[1]} | <b>Due</b> {quiz.availableUntil.split("T")[0]} at{" "}
-                    {quiz.availableUntil.split("T")[1]} | {quiz.points} pts
-                  </p>
+                <div className="col-6 text-end">
+                    {user && (user.role === "FACULTY" || user.role === "ADMIN") && (
+                        <button type="button" className="btn btn-danger ps-3 pe-3 me-2" onClick={handleAddNewQuiz}>
+                            <FaPlus /> Quiz
+                        </button>
+                    )}
+                    <button type="button" className="btn btn-light rounded pl-0 ps-3 pe-3">
+                        {/* <div onClick={() => handleMenu(null)}>
+                            <FaEllipsisVertical />
+                        </div> */}
+                    </button>
                 </div>
-                {quiz.completed && !disabled && (
-                  <div className="position-absolute top-50 end-0 translate-middle-y">
-                    <FaCheckCircle
-                      style={{ color: "#00940a" }}
-                      className="me-2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const confirmDelete = window.confirm(
-                          "Are you sure you want to delete this assignment?"
-                        );
-                        if (confirmDelete) {
-                          removeQuiz(quiz._id);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-                <br />
-                <br />
-                <br />
-              </li>
-            ))}
-          </ul>
-        </li>
-      </ul>
-    </div>
-  );
+            </div>
+       
+        <br/>
+
+            <div className="wd-title p-3 ps-4 bg-secondary d-flex align-items-center">
+                <span style={{ fontWeight: "bold" }}>Assignment Quizzes</span>
+            </div>
+            <ul className="list-group">
+                {filteredQuizzes.map((quiz: any) => (
+                    <li key={quiz._id} className="list-group-item">
+                        <div className="d-flex align-items-center justify-content-between">
+                            <Link
+                                to={`/Kanbas/Courses/${cid}/quizzes/${quiz._id}`}
+                                className="wd-quiz-list-item list-group-item d-flex align-items-center justify-content-between"
+                                style={{ textDecoration: 'none', border: 'none', width: '100%' }}
+                            >
+                                <div className="d-flex align-items-center">
+                                    <SiStarship className="me-3" style={{ fontSize: '24px' }} />
+                                    <div className="flex-grow-1">
+                                        <div>
+                                            <span style={{ fontWeight: "bold" }}>{quiz.name}</span>
+                                        </div>
+                                        <div>
+                                            <QuizAvailable quiz={quiz} /> |
+                                            <span style={{ fontWeight: "bold" }}>Due </span>
+                                            {quiz.dueDate ? formatDate(quiz.dueDate) : 'N/A'}
+
+                                            {(quiz.questions && quiz.questions.length > 0) ?
+                                                `| ${quiz.questions.reduce((addedPoints: number, { points }: any) => addedPoints + points, 0)} pts | ` : `| 0 pts | `
+                                            }
+                                            {quiz.questions ? quiz.questions.length : 0} Questions
+
+
+                                            {user && user.role === "STUDENT" && (
+                                                <span style={{ fontWeight: "bold" }}>| {'score' in quiz ? `${quiz.score} /  ${quiz.questions.reduce((addedPoints: any, { points }: any) => addedPoints + points, 0)} pts` : 'No score yet'} </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                            <div className="d-flex align-items-center me-2">
+                                {/* NEED UPDATE: display if student took the quiz */}
+                                {user.role === "STUDENT" && (
+                                    <FaCheckCircle />
+                                )}
+
+                                {user.role === "FACULTY" && (
+                                    <>
+                                        {quiz.published ? (
+                                            <FaCheckCircle className="me-2 text-success" style={{ fontSize: '24px' }} />
+                                        ) : (
+                                            <button type="button" onClick={() => handleChangePublishValue(quiz, true)}>
+                                            <MdDoNotDisturb className="text-danger" style={{ fontSize: '24px' }} />
+                                        </button>
+)}
+                                        <div onClick={() => handleMenu(quiz._id)}>
+                                            <FaEllipsisVertical style={{ fontSize: '24px' }} />
+                                        </div>
+                                        {activeQuizId === quiz._id && (
+                                            <div className="col">
+                                                <button type="button" className="btn btn-secondary btn-sm rounded m-2" onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/edit`)}>
+                                                    Edit
+                                                </button>
+                                                {quiz.published ? (
+                                                    <button type="button" className="btn btn-danger btn-sm rounded m-2" onClick={() => handleChangePublishValue(quiz, false)}>
+                                                        <FaBan /> Unpublish
+                                                    </button>
+                                                ) : (
+                                                    <button type="button" className="btn btn-success btn-sm rounded m-2" onClick={() => handleChangePublishValue(quiz, true)}>
+                                                        <FaCheckCircle /> Publish
+                                                    </button>
+                                                )}
+                                                <button type="button" className="btn btn-danger btn-sm rounded m-2" onClick={() => handleDelete(quiz._id)}>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                        </div >
+                    </li >
+                ))
+                }
+            </ul >
+        </div >
+    );
 }

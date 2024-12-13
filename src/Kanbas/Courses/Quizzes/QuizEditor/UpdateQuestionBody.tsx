@@ -27,13 +27,13 @@ function QuestionHeader() {
                 <Select
                     value={questionTypeOptions.find((option) => option.value === question.questionType)}
                     options={questionTypeOptions}
-                    onChange={(e) => {
+                    onChange={(e: any) => {
                         if (e) {
                             dispatch(setQuestion({ ...question, questionType: e.value }));
                         }
                     }}
                     styles={{
-                        container: (provided) => ({
+                        container: (provided: any) => ({
                             ...provided,
                             zIndex: 1000
                         })

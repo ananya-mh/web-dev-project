@@ -25,7 +25,7 @@ export const updateQuiz = async (quiz: any) => {
 };
 
 export const findQuizzesForCourse = async (courseId: any) => {
-    const response = await axios.get(`${COURSES_API}/${courseId}/quizzes`);
+    const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/quizzes`);
     return response.data;
 };
 
@@ -36,8 +36,8 @@ export const findQuizByQuizId = async (quizId: any) => {
   return response.data;
 }
 
-export const updateAttemps = async (qid: String, history: any) => {
-    const response = await axiosWithCredentials.post(`${ATTEMPTS_API}/${qid}`, history);
+export const updateAttemps = async (qid: String, attempts: any) => {
+    const response = await axiosWithCredentials.post(`${ATTEMPTS_API}/${qid}`, attempts);
     return response.data;
 };
 
@@ -46,12 +46,4 @@ export const findHistoriesByQuizId = async (qid: String) => {
     return response.data;
 };
 
-// export const updateHistory = async (qid: String, history: any) => {
-//     const response = await axiosWithCredentials.post(`${HISTORY_API}/${qid}`, history);
-//     return response.data;
-// };
 
-// export const findHistoriesByQuizId = async (qid: String) => {
-//     const response = await axiosWithCredentials.get(`${HISTORY_API}/${qid}`);
-//     return response.data;
-// };
