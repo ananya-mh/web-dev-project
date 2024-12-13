@@ -14,7 +14,7 @@ import QuizDetails from "./Quizzes/QuizDetails";
 import QuizEditor from "./Quizzes/QuizEditor";
 import QuizTake from "./Quizzes/QuizTake";
 import QuizDetailScreen from "./Quizzes/QuizDetailScreen";
-import QuizPreview from "./Quizzes/QuizPreview";
+// import QuizPreview from "./Quizzes/QuizPreview";
 
 export default function Courses({ courses }) {
   const { pathname } = useLocation();
@@ -43,7 +43,7 @@ export default function Courses({ courses }) {
             <Route path="Quizzes" element={<Quizzes />} />
             <Route path="Quizzes/:qid" element={<QuizDetailScreen />} />
             <Route path="Quizzes/:qid/edit" element={<QuizEditor />} />
-            <Route path="Quizzes/:qid/take" element={<QuizPreview />} />
+            <Route path="Quizzes/:qid/take/*" element={<QuizTake />} />
             <Route path="Grades" element={<h2>Grades</h2>} />
             <Route path="People" element={<CoursePeople/>}/>
           </Routes>

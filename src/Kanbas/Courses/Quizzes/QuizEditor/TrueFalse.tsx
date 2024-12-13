@@ -41,12 +41,20 @@ export default function TrueFalse() {
                         zIndex: 1
                     }}
                 /> */}
-                <Editor
+                {/* <Editor
                     apiKey={WYSIWYG_API}
                     value={question.questionText}
                     onEditorChange={(newQuestionText, editor) => {
                         dispatch(setQuestion({ ...question, questionText: newQuestionText }))
                     }}
+                /> */}
+                <textarea
+                    className="form-control mb-2"
+                    cols={10}
+                    value={question.questionText}
+                    onChange={(e) =>
+                        dispatch(setQuestion({ ...question, questionText: e.target.value }))
+                    }
                 />
             </div>
             <div className="col-12 mb-3">

@@ -134,8 +134,6 @@ export default function Quizzes() {
                                                 `| ${quiz.questions.reduce((addedPoints: number, { points }: any) => addedPoints + points, 0)} pts | ` : `| 0 pts | `
                                             }
                                             {quiz.questions ? quiz.questions.length : 0} Questions
-
-
                                             {user && user.role === "STUDENT" && (
                                                 <span style={{ fontWeight: "bold" }}>| {'score' in quiz ? `${quiz.score} /  ${quiz.questions.reduce((addedPoints: any, { points }: any) => addedPoints + points, 0)} pts` : 'No score yet'} </span>
                                             )}
