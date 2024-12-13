@@ -36,12 +36,7 @@ export const findQuizByQuizId = async (quizId: any) => {
   return response.data;
 }
 
-// export const updateHistory = async (qid: String, history: any) => {
-//     const response = await axiosWithCredentials.post(`${HISTORY_API}/${qid}`, history);
-//     return response.data;
-// };
-
-// export const findHistoriesByQuizId = async (qid: String) => {
-//     const response = await axiosWithCredentials.get(`${HISTORY_API}/${qid}`);
-//     return response.data;
-// };
+export const updateHistory = async (qid: String, history: any) => {
+    const response = await axiosWithCredentials.post(`${HISTORY_API}/${qid}`, history);
+    return response.data;
+};
