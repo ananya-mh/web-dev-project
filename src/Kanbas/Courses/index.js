@@ -11,6 +11,10 @@ import { useParams } from "react-router";
 import CoursePeople from "./People/CoursePeople";
 import Quizzes from "./Quizzes";
 import QuizDetails from "./Quizzes/QuizDetails";
+import QuizEditor from "./Quizzes/QuizEditor";
+import QuizTake from "./Quizzes/QuizTake";
+import QuizDetailScreen from "./Quizzes/QuizDetailScreen";
+import QuizPreview from "./Quizzes/QuizPreview";
 
 export default function Courses({ courses }) {
   const { pathname } = useLocation();
@@ -37,7 +41,9 @@ export default function Courses({ courses }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:qid" element={<QuizDetails />} />
+            <Route path="Quizzes/:qid" element={<QuizDetailScreen />} />
+            <Route path="Quizzes/:qid/edit" element={<QuizEditor />} />
+            <Route path="Quizzes/:qid/take" element={<QuizPreview />} />
             <Route path="Grades" element={<h2>Grades</h2>} />
             <Route path="People" element={<CoursePeople/>}/>
           </Routes>

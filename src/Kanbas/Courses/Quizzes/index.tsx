@@ -18,6 +18,7 @@ export default function Quizzes() {
   const { cid } = useParams();
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  console.log(currentUser.role);
   const disabled = currentUser.role !== "FACULTY";
   const intialQuiz = {
     name: "Quiz 1",
@@ -26,20 +27,20 @@ export default function Quizzes() {
     course: 932490543,
     type: "Graded",
     points: "100",
-    assignmentGroup:"QUIZZES" ,
+    assignmentGroup: "QUIZZES",
     shuffleAnswers: false,
-    timeLimit: 20 ,
-    multipleAttempts: false ,
-    attemptChance: 1 ,
-    showCorrectAnswers:false ,
-    accessCode:  "" ,
-    oneQuestionAtATime:  true ,
+    timeLimit: 20,
+    multipleAttempts: false,
+    attemptChance: 1,
+    showCorrectAnswers: false,
+    accessCode: "",
+    oneQuestionAtATime: true,
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: "date",
     availableFrom: "date",
-    availableUntil:"date",
-    isTemporary: true ,
+    availableUntil: "date",
+    isTemporary: true,
     questions: []
   };
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
@@ -101,7 +102,6 @@ export default function Quizzes() {
                       className="me-2"
                       onClick={(e) => {
                         e.preventDefault();
-
                         const confirmDelete = window.confirm(
                           "Are you sure you want to delete this assignment?"
                         );
